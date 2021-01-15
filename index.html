@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>英文單字</title>
+		<link rel="stylesheet" type="text/css" href="./word.css">
+		<script src='./Assist.js'></script>
+		<script>
+		var currentScript = [];
+		</script>
+	</head>
+	<body>
+	<table id='Get'>
+	<tr>
+	<td><input id='getvalue'></td>
+	<td><input type='button' value='輸入' onclick='GetF(0);'></td>
+	</tr>
+	</table>
+	<div id='Set'>
+	<object id='left'></object>
+	<text class='check'>考英文(單選):</text><input type='number' class='check' id='SC1' min=0><br class='check'>
+	<text class='check'>考中文(單選):</text><input type='number' class='check' id='SC2' min=0><br class='check'>
+	<button class='check' onclick='SCF(document.getElementById("SC1").value,document.getElementById("SC2").value);'>單選確定</button><br class='check'>
+	<text class='Ncheck'>題目數:</text><input type='number' class='Ncheck' id='SC' min=0><br class='Ncheck'>
+	<button class='Ncheck' onclick='SCF(document.getElementById("SC").value,"0");'>單選確定</button><br class='Ncheck'>
+	<input type='checkbox' id='SCcheck'>自動選取考英文還是考中文
+	<table id='table'>
+	<tbody>
+	<script>
+	currentScript['Set'] = document.currentScript;
+	</script>
+	</tbody>
+	</table>
+	</div>
+	<script>
+	ChangeF(['Set'],['Ncheck'])
+	var list = [[['universal'],['(adj.)普遍的']],[['detect'],['(v.)檢測']],[['intensive'],['(adj.)密集的','(adj.)強烈的']],[['admit'],['(v.)承認']],[['opposite'],['(adj.)相反的']],[['contrary'],['(adj.)相反的']]];
+	var save = JsonsaveF(list);
+	document.getElementById('getvalue').value = save;
+	var set = [];
+	var listnA = [];
+	var listnB = [];
+	var bodywidth = document.body.clientWidth;
+	var bodyheight = document.body.clientHeight;
+	var tablewidth = document.getElementById('table').clientWidth;
+	var tableheight = document.getElementById('table').clientHeight;
+	var check = 0;
+	function GetF(getA){
+		var get = document.getElementById('getvalue').value;
+		list = JsongetF(get);
+		if(getA == 0){
+			ChangeF(['Set','Get'],[]);
+			textF();
+			recoverF(0);
+		}
+	}
+	function recoverF(get){
+		if(get == 0){
+			listnA = [];
+		}
+		listnB = [];
+		for(var i=0;i<list.length;i++){
+			if(get == 0){
+				listnA[i] = 0;
+			}
+			listnB[i] = 0;
+		}
+	}
+	function textF(){
+		var i=0,j=0;
+		while(i<list.length){
+			var str='<tr>';
+			while(j<list[i].length){
+				for(k=0;k<list[i][j].length;k++){
+					str+='<td>'+list[i][j][k]+'</td>'
+				}
+				j++;
+			}
+			str+='</tr>'
+			CurrentScriptF('Set','bb',str);
+			i++;
+			j=0;
+		}
+	}
+	function SCF(get1,get2){
+		recoverF(0);
+		var get = parseInt(get1,10)+parseInt(get2,10);
+		if(get <= list.length){
+			set = []
+			for(i=0;i<get;i++){
+				recoverF(1);
+				var num1 = Math.floor(Math.random()*list.length);
+				while(listnA[num1] == 1){
+					var num1 = Math.floor(Math.random()*list.length);
+				}
+				var num2 = Math.floor(Math.random()*list[num1][0].length);
+				var num3 = Math.floor(Math.random()*list[num1][1].length);
+				if(check == 1){
+					var num4 = Math.floor(Math.random()*2);
+				}else if(i < parseInt(get1,10)){
+					var num4 = 0;
+				}else{
+					var num4 = 1;
+				}
+				listnA[num1] = 1;
+				listnB[num1] = 1;
+				set[i] = [[num1,num2,num3,num4]]
+				set[i][1] = [];
+				for(j=1;j<=3;j++){
+					testF(set[i][j-1][0]);
+					var num1 = Math.floor(Math.random()*list.length);
+					while(listnB[num1] == 1){
+						var num1 = Math.floor(Math.random()*list.length);
+					}
+					var num2 = Math.floor(Math.random()*list[num1][0].length);
+					var num3 = Math.floor(Math.random()*list[num1][1].length);
+					listnB[num1] = 1;
+					set[i][j] = [num1,num2,num3]
+				}
+			}
+			console.log(set);
+		}
+	}
+	function testF(get){
+		for(k=0;k<list.length;k++){
+			for(l=0;l<list[k].length;l++){
+				for(m=0;m<list[k][l].length;m++){
+					if(list[get][l].indexOf(list[k][l][m]) != -1){
+						listnB[k] = 1
+					}
+				}
+			}
+		}
+	}
+	var AutoLoadF = setInterval(function(){
+		bodywidth = document.body.clientWidth;
+		bodyheight = document.body.scrollHeight;
+		tablewidth = document.getElementById('table').clientWidth;
+		tableheight = document.getElementById('table').scrollHeight;
+		if(tablewidth != 0){
+			var leftbody = (bodywidth - tablewidth)/2;
+			if(leftbody > 0.5 && document.getElementById("left").style.display != 'none'){
+			document.getElementById("left").setAttribute('width', leftbody);
+			document.getElementById("left").setAttribute('heigth', bodyheight);
+			}else if(leftbody > 0.5 && document.getElementById("left").style.display == 'none'){
+				ChangeF(['left'],[])
+			}else if(leftbody <= 0.5 && document.getElementById("left").style.display != 'none'){
+				ChangeF(['left'],[])
+			}
+		}
+		if(document.getElementById('SCcheck').checked == true && check == 0){
+			ChangeF([],['check','Ncheck'])
+			check++;
+		}else if(document.getElementById('SCcheck').checked == false && check == 1){
+			ChangeF([],['check','Ncheck'])
+			check--;
+		}
+	},100);
+	</script>
+	</body>
+</html>

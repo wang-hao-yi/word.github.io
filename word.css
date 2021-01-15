@@ -1,0 +1,23 @@
+.result{
+  text-decoration:none;
+  font-weight:bold;
+}
+.list{
+  text-decoration:none;
+}
+#songset {
+    overflow: hidden;
+}
+#right {
+    float: right;
+	text-align:right;
+}
+#left {
+    float: left;
+}
+#middle {
+    margin: 0 250px;
+}
+a:hover {
+	font-weight:bolder;
+}
