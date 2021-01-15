@@ -42,8 +42,8 @@
 	<td>load...</td>
 	</tr>
 	</table>
-	<div id='Set'>
 	<object id='left'></object>
+	<div id='Set'>
 	<text class='check'>考英文(單選):</text><input type='number' class='check' id='SC1' min=0><br class='check'>
 	<text class='check'>考中文(單選):</text><input type='number' class='check' id='SC2' min=0><br class='check'>
 	<button class='check' onclick='SCF(document.getElementById("SC1").value,document.getElementById("SC2").value);'>單選確定</button><br class='check'>
@@ -58,16 +58,33 @@
 	</tbody>
 	</table>
 	</div>
+	<div id='question'>
+	<table>
+	<tbody>
+	<tr><td id='topic'>0</td></tr>
+	<tr><td id='ans1' onclick='Ans(event.srcElement);'>1</td></tr>
+	<tr><td id='ans2' onclick='Ans(event.srcElement);'>2</td></tr>
+	<tr><td id='ans3' onclick='Ans(event.srcElement);'>3</td></tr>
+	<tr><td id='ans4' onclick='Ans(event.srcElement);'>4</td></tr>
+	<tr><td id='nextset'onclick=''>下一題</td></tr>
+	</tbody>
+	</table>
+	</div>
 	<script>
-	ChangeF(['Set'],['Ncheck'])
+	ChangeF(['Set','question'],['Ncheck'])
 	var set = [];
-	var listnA = [];
-	var listnB = [];
+	var listn = [];
 	var bodywidth = document.body.clientWidth;
 	var bodyheight = document.body.clientHeight;
 	var tablewidth = document.getElementById('table').clientWidth;
 	var tableheight = document.getElementById('table').clientHeight;
 	var check = 0;
+	var nowQ = 0;
+	var right = localStorage.getItem('right');
+	if(right == null) right = 0;
+	var wrong = localStorage.getItem('wrong');
+	if(wrong == null) wrong = 0;
+	var saveset = [];
 	db.ref('set').once('value', function (snapshot){
 		list = snapshot.val();
 		GetF(0);
@@ -80,15 +97,12 @@
 		}
 	}
 	function recoverF(get){
-		if(get == 0){
-			listnA = [];
-		}
-		listnB = [];
 		for(var i=0;i<list.length;i++){
 			if(get == 0){
-				listnA[i] = 0;
+				listn[i] = [];
+				listn[i][0] = 0;
 			}
-			listnB[i] = 0;
+			listn[i][1] = 0;
 		}
 	}
 	function textF(){
@@ -115,10 +129,9 @@
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
 		if(get <= list.length && get > 0){
-			set = []
-			for(i=0;i<get;i++){
+			for(i=set.length;i<get;i++){
 				recoverF(1);
-				var num = random();
+				var num = random(0);
 				if(check == 1){
 					var num4 = Math.floor(Math.random()*2);
 				}else if(i < parseInt(get1,10)){
@@ -126,16 +139,19 @@
 				}else{
 					var num4 = 1;
 				}
-				listnA[num[0]] = 1;
+				listn[num[0]][0] = 1;
 				set[i] = [[num[0],num[1],num[2],num4]]
 				set[i][1] = [];
 				for(j=1;j<=3;j++){
 					testF(set[i][j-1][0]);
-					var num = random();
+					var num = random(1);
 					set[i][j] = num;
 				}
 			}
-			console.log(set);
+			ChangeF(['Set','question'],[]);
+			nowQ = 0;
+			questionF();
+			saveset = [];
 		}else{
 			alert('error')
 		}
@@ -145,20 +161,20 @@
 			for(l=0;l<list[k].length;l++){
 				for(m=0;m<list[k][l].length;m++){
 					if(list[get][l].indexOf(list[k][l][m]) != -1){
-						listnB[k] = 1
+						listn[k][1] = 1
 					}
 				}
 			}
 		}
 	}
-	function random(){
+	function random(a){
 		var num1 = Math.floor(Math.random()*list.length);
-		while(listnB[num1] == 1){
+		while(listn[num1][a] == 1){
 			var num1 = Math.floor(Math.random()*list.length);
 		}
 		var num2 = Math.floor(Math.random()*list[num1][0].length);
 		var num3 = Math.floor(Math.random()*list[num1][1].length);
-		listnB[num1] = 1;
+		listn[num1][1] = 1;
 		return [num1,num2,num3]
 	}
 	var AutoLoadF = setInterval(function(){
@@ -166,11 +182,11 @@
 		bodyheight = document.body.scrollHeight;
 		tablewidth = document.getElementById('table').clientWidth;
 		tableheight = document.getElementById('table').scrollHeight;
-		if(tablewidth != 0){
+		if(tablewidth != 0 && document.getElementById('table').style.display != 'none'){
 			var leftbody = (bodywidth - tablewidth)/2;
 			if(leftbody > 0.5 && document.getElementById("left").style.display != 'none'){
 			document.getElementById("left").setAttribute('width', leftbody);
-			document.getElementById("left").setAttribute('heigth', bodyheight);
+			document.getElementById("left").setAttribute('height', bodyheight);
 			}else if(leftbody > 0.5 && document.getElementById("left").style.display == 'none'){
 				ChangeF(['left'],[])
 			}else if(leftbody <= 0.5 && document.getElementById("left").style.display != 'none'){
@@ -185,6 +201,57 @@
 			check--;
 		}
 	},100);
+	function questionF(){
+		if(set[nowQ][0][3] == 0){
+			var A = 1;
+			var B = 0;
+		}else{
+			var A = 0;
+			var B = 1;
+		}
+		document.getElementById('topic').innerText = list[set[nowQ][0][0]][A][set[nowQ][0][A+1]]
+		var Ansget = []
+		var Ansset = [0,0,0,0]
+		for(i=0;i<4;i++){
+			var get = Math.floor(Math.random()*4);
+			while(Ansset[get] == 1){
+				var get = Math.floor(Math.random()*4);
+			}
+			Ansget[i] = get;
+			Ansset[get] = 1;
+		}
+		for(i=1;i<=4;i++){
+			document.getElementById('ans'+i).innerText = list[set[nowQ][Ansget[i-1]][0]][B][set[nowQ][Ansget[i-1]][B+1]]
+		}
+	}
+	function Ans(get){
+		if(get.innerText == list[set[nowQ][0][0]][set[nowQ][0][3]][set[nowQ][0][set[nowQ][0][3]+1]]){
+			get.innerText+= ' 恭喜答對'
+			get.style.color = 'lightgreen';
+		}else{
+			get.innerText+= ' 錯誤'
+			get.style.color = 'red';
+			saveset[saveset.length] = set[nowQ]
+		}
+		for(i=1;i<5;i++){
+			document.getElementById('ans'+i).setAttribute('onclick','');
+		}
+		document.getElementById('nextset').setAttribute('onclick','next();');
+	}
+	function next(){
+		nowQ++;
+		if(nowQ < set.length){
+			questionF();
+		}else{
+			ChangeF(['Set','question'],[]);
+			set = saveset;
+		}
+		for(i=1;i<5;i++){
+			document.getElementById('ans'+i).setAttribute('onclick','Ans(event.srcElement)');
+			document.getElementById('ans'+i).style.color = 'black';
+		}
+		document.getElementById('nextset').setAttribute('onclick','');
+	}
 	</script>
 	</body>
 </html>
