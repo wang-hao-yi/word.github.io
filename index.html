@@ -51,7 +51,7 @@
 	<button class='Ncheck' onclick='SCF(document.getElementById("SC").value,"0");'>單選確定</button><br class='Ncheck'>
 	<input type='checkbox' id='SCcheck'>自動選取考英文還是考中文
 	<table id='table'>
-	<tbody>
+	<tbody id='list'>
 	<script>
 	currentScript['Set'] = document.currentScript;
 	</script>
@@ -92,6 +92,10 @@
 		}
 	}
 	function textF(){
+		if(NUF(document.getElementById('list'),[false,false],'and')){
+			document.getElementById('list').innerText = ''
+			CreateF('script',"currentScript['Set'] = document.currentScript;",'list')
+		}
 		var i=0,j=0;
 		while(i<list.length){
 			var str='<tr>';
@@ -110,16 +114,11 @@
 	function SCF(get1,get2){
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
-		if(get <= list.length){
+		if(get <= list.length && get > 0){
 			set = []
 			for(i=0;i<get;i++){
 				recoverF(1);
-				var num1 = Math.floor(Math.random()*list.length);
-				while(listnA[num1] == 1){
-					var num1 = Math.floor(Math.random()*list.length);
-				}
-				var num2 = Math.floor(Math.random()*list[num1][0].length);
-				var num3 = Math.floor(Math.random()*list[num1][1].length);
+				var num = random();
 				if(check == 1){
 					var num4 = Math.floor(Math.random()*2);
 				}else if(i < parseInt(get1,10)){
@@ -127,23 +126,18 @@
 				}else{
 					var num4 = 1;
 				}
-				listnA[num1] = 1;
-				listnB[num1] = 1;
-				set[i] = [[num1,num2,num3,num4]]
+				listnA[num[0]] = 1;
+				set[i] = [[num[0],num[1],num[2],num4]]
 				set[i][1] = [];
 				for(j=1;j<=3;j++){
 					testF(set[i][j-1][0]);
-					var num1 = Math.floor(Math.random()*list.length);
-					while(listnB[num1] == 1){
-						var num1 = Math.floor(Math.random()*list.length);
-					}
-					var num2 = Math.floor(Math.random()*list[num1][0].length);
-					var num3 = Math.floor(Math.random()*list[num1][1].length);
-					listnB[num1] = 1;
-					set[i][j] = [num1,num2,num3]
+					var num = random();
+					set[i][j] = num;
 				}
 			}
 			console.log(set);
+		}else{
+			alert('error')
 		}
 	}
 	function testF(get){
@@ -156,6 +150,16 @@
 				}
 			}
 		}
+	}
+	function random(){
+		var num1 = Math.floor(Math.random()*list.length);
+		while(listnB[num1] == 1){
+			var num1 = Math.floor(Math.random()*list.length);
+		}
+		var num2 = Math.floor(Math.random()*list[num1][0].length);
+		var num3 = Math.floor(Math.random()*list[num1][1].length);
+		listnB[num1] = 1;
+		return [num1,num2,num3]
 	}
 	var AutoLoadF = setInterval(function(){
 		bodywidth = document.body.clientWidth;
