@@ -7,12 +7,39 @@
 		<script>
 		var currentScript = [];
 		</script>
+		<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-analytics.js"></script>
+		<script>
+		var firebaseConfig = {
+			apiKey: "AIzaSyCscmddu_yfmDNZgTlnEu9H7beuUozMiPE",
+			authDomain: "word-7ddc0.firebaseapp.com",
+			databaseURL: "https://word-7ddc0-default-rtdb.firebaseio.com",
+			projectId: "word-7ddc0",
+			storageBucket: "word-7ddc0.appspot.com",
+			messagingSenderId: "41425239359",
+			appId: "1:41425239359:web:d23ab641a06b34502c278a",
+			measurementId: "G-2V8Z2RZJCJ"
+		  };
+		firebase.initializeApp(firebaseConfig);
+		firebase.analytics();
+		const db = firebase.database();
+		/*
+		{
+  "rules": {
+    ".write":"auth.uid != null",
+    ".read": true,
+    "$user": {
+      ".validate":"$user === auth.uid"
+    }
+  }
+}
+*/
+		</script>
 	</head>
 	<body>
 	<table id='Get'>
 	<tr>
-	<td><input id='getvalue'></td>
-	<td><input type='button' value='輸入' onclick='GetF(0);'></td>
+	<td>load...</td>
 	</tr>
 	</table>
 	<div id='Set'>
@@ -33,9 +60,6 @@
 	</div>
 	<script>
 	ChangeF(['Set'],['Ncheck'])
-	var list = [[['universal'],['(adj.)普遍的']],[['detect'],['(v.)檢測']],[['intensive'],['(adj.)密集的','(adj.)強烈的']],[['admit'],['(v.)承認']],[['opposite'],['(adj.)相反的']],[['contrary'],['(adj.)相反的']]];
-	var save = JsonsaveF(list);
-	document.getElementById('getvalue').value = save;
 	var set = [];
 	var listnA = [];
 	var listnB = [];
@@ -44,9 +68,11 @@
 	var tablewidth = document.getElementById('table').clientWidth;
 	var tableheight = document.getElementById('table').clientHeight;
 	var check = 0;
+	db.ref('set').once('value', function (snapshot){
+		list = snapshot.val();
+		GetF(0);
+	});
 	function GetF(getA){
-		var get = document.getElementById('getvalue').value;
-		list = JsongetF(get);
 		if(getA == 0){
 			ChangeF(['Set','Get'],[]);
 			textF();
