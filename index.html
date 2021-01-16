@@ -46,11 +46,35 @@
 	<text onclick='fontset(--font);'>字體縮小</text>
 	<text id='fontget'></text>
 	<text onclick='fontset(++font);'>字體放大</text><br>
-	<text class='check'>考英文(單選):</text><input type='number' class='check' id='SC1' min=0><br class='check'>
-	<text class='check'>考中文(單選):</text><input type='number' class='check' id='SC2' min=0><br class='check'>
-	<button class='check' onclick='SCF(document.getElementById("SC1").value,document.getElementById("SC2").value);'>單選確定</button><br class='check'>
-	<text class='Ncheck'>題目數:</text><input type='number' class='Ncheck' id='SC' min=0><br class='Ncheck'>
-	<button class='Ncheck' onclick='SCF(document.getElementById("SC").value,"0");'>單選確定</button><br class='Ncheck'>
+	<div class='check'>
+	<text>考英文(單選):</text>
+	<text onclick='getF(1,-5)'>-5</text>
+	<text onclick='getF(1,-1)'>-1</text>
+	<text id='get1set'></text>
+	<text onclick='getF(1,+1)'>+1</text>
+	<text onclick='getF(1,+5)'>+5</text>
+	<br>
+	<text>考中文(單選):</text>
+	<text onclick='getF(2,-5)'>-5</text>
+	<text onclick='getF(2,-1)'>-1</text>
+	<text id='get2set'></text>
+	<text onclick='getF(2,+1)'>+1</text>
+	<text onclick='getF(2,+5)'>+5</text>
+	<br>
+	<button onclick='SCF(get[1],get[2]);'>單選確定</button>
+	<br>
+	</div>
+	<div class='Ncheck'>
+	<text>題目數:</text>
+	<text onclick='getF(0,-5)'>-5</text>
+	<text onclick='getF(0,-1)'>-1</text>
+	<text id='get0set'></text>
+	<text onclick='getF(0,+1)'>+1</text>
+	<text onclick='getF(0,+5)'>+5</text>
+	<br>
+	<button onclick='SCF(get[0],0);'>單選確定</button>
+	<br>
+	</div>
 	<input type='checkbox' id='SCcheck'>自動選取考英文還是考中文
 	<table id='table'>
 	<tbody id='list'>
@@ -89,11 +113,22 @@
 	var saveset = [];
 	var font = localStorage.getItem('font');
 	if(font == null) font = 20;
+	var get = [0,0,0];
 	fontset(font);
+	getF(0,0);
+	getF(1,0);
+	getF(2,0);
 	db.ref('set').once('value', function (snapshot){
 		list = snapshot.val();
 		GetF(0);
 	});
+	function getF(i,set){
+		get[i]+=set
+		if(get[i] < 0){
+			get[i] = 0;
+		}
+		document.getElementById('get'+i+'set').innerText = get[i];
+	}
 	function GetF(getA){
 		if(getA == 0){
 			ChangeF(['Set','Get'],[]);
