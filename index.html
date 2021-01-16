@@ -42,7 +42,9 @@
 	<td>load...</td>
 	</tr>
 	</table>
-	<object id='left'></object>
+	<text onclick='fontset(--font);'>字體縮小</text>
+	<text id='fontget'></text>
+	<text onclick='fontset(++font);'>字體放大</text><br>
 	<div id='Set'>
 	<text class='check'>考英文(單選):</text><input type='number' class='check' id='SC1' min=0><br class='check'>
 	<text class='check'>考中文(單選):</text><input type='number' class='check' id='SC2' min=0><br class='check'>
@@ -85,6 +87,9 @@
 	var wrong = localStorage.getItem('wrong');
 	if(wrong == null) wrong = 0;
 	var saveset = [];
+	var font = localStorage.getItem('font');
+	if(font == null) font = 20;
+	fontset(font);
 	db.ref('set').once('value', function (snapshot){
 		list = snapshot.val();
 		GetF(0);
@@ -182,17 +187,6 @@
 		bodyheight = document.body.scrollHeight;
 		tablewidth = document.getElementById('table').clientWidth;
 		tableheight = document.getElementById('table').scrollHeight;
-		if(tablewidth != 0 && document.getElementById('table').style.display != 'none'){
-			var leftbody = (bodywidth - tablewidth)/2;
-			if(leftbody > 0.5 && document.getElementById("left").style.display != 'none'){
-			document.getElementById("left").setAttribute('width', leftbody);
-			document.getElementById("left").setAttribute('height', bodyheight);
-			}else if(leftbody > 0.5 && document.getElementById("left").style.display == 'none'){
-				ChangeF(['left'],[])
-			}else if(leftbody <= 0.5 && document.getElementById("left").style.display != 'none'){
-				ChangeF(['left'],[])
-			}
-		}
 		if(document.getElementById('SCcheck').checked == true && check == 0){
 			ChangeF([],['check','Ncheck'])
 			check++;
@@ -201,6 +195,12 @@
 			check--;
 		}
 	},100);
+	function fontset(font){
+		document.getElementById('Set').style.fontSize = font+'px'
+		document.getElementById('fontget').innerText = font+'px'
+		localStorage.setItem('font',font);
+		document.getElementById('question').style.fontSize = font+'px'
+	}
 	function questionF(){
 		if(set[nowQ][0][3] == 0){
 			var A = 1;
