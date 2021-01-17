@@ -63,7 +63,7 @@
 	<text>+1</text><text>+5</text><text>+10</text>
 	<br>
 	</div>
-	<text onclick='SCF(get[1],get[2]);'>單選確定</text>
+	<button onclick='SCF(get[1],get[2]);'>單選確定</button>
 	<br>
 	</div>
 	<div class='Ncheck'>
@@ -78,7 +78,7 @@
 	<text>+10</text>
 	<br>
 	</div>
-	<text onclick='SCF(get[0],0);'>單選確定</text>
+	<button onclick='SCF(get[0],0);'>單選確定</button>
 	<br>
 	</div>
 	<table id='table'>
@@ -140,12 +140,12 @@
 		}
 		localStorage.setItem('SCcheck',e.title);
 	}
-	function local(e,define){
-		e = localStorage.getItem(e);
-		if(e == null){
+	function local(get,define){
+		get = localStorage.getItem(get);
+		if(get == null){
 			return define;
 		}else{
-			return e;
+			return get;
 		}
 	}
 	function getF(i,set){
@@ -159,9 +159,9 @@
 			document.getElementById('get'+i+'set').innerText = get[i];
 		}
 	}
-	function recoverF(e){
+	function recoverF(get){
 		for(var i=0;i<list.length;i++){
-			if(e == 0){
+			if(get == 0){
 				listn[i] = [];
 				listn[i][0] = 0;
 			}
@@ -192,8 +192,9 @@
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
 		if(get > 0){
+			var setlength = set.length;
 			for(i=set.length;i<get;i++){
-				if(i % list.length == 0){
+				if((i - setlength) % list.length == 0){
 					recoverF(0);
 				}else{
 					recoverF(1);
@@ -253,12 +254,11 @@
 		localStorage.setItem('right',right);
 		localStorage.setItem('wrong',wrong);
 	},100);
-	function fontset(e){
-		document.getElementById('Set').style.fontSize = e+'px'
-		document.getElementById('fontget').innerText = e+'px'
-		localStorage.setItem('font',e$;
-		document.getElementById('question').style.fontSize = e+'px'
-                font = e;
+	function fontset(font){
+		document.getElementById('Set').style.fontSize = font+'px'
+		document.getElementById('fontget').innerText = font+'px'
+		localStorage.setItem('font',font);
+		document.getElementById('question').style.fontSize = font+'px'
 	}
 	function questionF(){
 		if(set[nowQ][0][3] == 0){
