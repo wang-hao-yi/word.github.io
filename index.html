@@ -46,36 +46,41 @@
 	<text onclick='fontset(--font);'>字體縮小</text>
 	<text id='fontget'></text>
 	<text onclick='fontset(++font);'>字體放大</text><br>
+	<text>自動選取考英文還是考中文:</text>
+	<text title='false' onclick='SCcheckF(event.srcElement)'>關</text>
 	<div class='check'>
-	<text>考英文(單選):</text>
-	<text onclick='getF(1,-5)'>-5</text>
-	<text onclick='getF(1,-1)'>-1</text>
-	<text id='get1set'></text>
-	<text onclick='getF(1,+1)'>+1</text>
-	<text onclick='getF(1,+5)'>+5</text>
+	<div onclick='getF(1,event.srcElement)' class='notget'>
+	<text class='notget'>考英文(單選):</text>
+	<text>-10</text><text>-5</text><text>-1</text>
+	<text id='get1set' class='notget'>0</text>
+	<text>+1</text><text>+5</text><text>+10</text>
 	<br>
-	<text>考中文(單選):</text>
-	<text onclick='getF(2,-5)'>-5</text>
-	<text onclick='getF(2,-1)'>-1</text>
-	<text id='get2set'></text>
-	<text onclick='getF(2,+1)'>+1</text>
-	<text onclick='getF(2,+5)'>+5</text>
+	</div>
+	<div onclick='getF(2,event.srcElement)' class='notget'>
+	<text class='notget'>考中文(單選):</text>
+	<text>-10</text><text>-5</text><text>-1</text>
+	<text id='get2set' class='notget'>0</text>
+	<text>+1</text><text>+5</text><text>+10</text>
 	<br>
+	</div>
 	<button onclick='SCF(get[1],get[2]);'>單選確定</button>
 	<br>
 	</div>
 	<div class='Ncheck'>
-	<text>題目數:</text>
-	<text onclick='getF(0,-5)'>-5</text>
-	<text onclick='getF(0,-1)'>-1</text>
-	<text id='get0set'></text>
-	<text onclick='getF(0,+1)'>+1</text>
-	<text onclick='getF(0,+5)'>+5</text>
+	<div onclick='getF(0,event.srcElement)' class='notget'>
+	<text class='notget'>題目數:</text>
+	<text>-10</text>
+	<text>-5</text>
+	<text>-1</text>
+	<text id='get0set' class='notget'>0</text>
+	<text>+1</text>
+	<text>+5</text>
+	<text>+10</text>
 	<br>
+	</div>
 	<button onclick='SCF(get[0],0);'>單選確定</button>
 	<br>
 	</div>
-	<input type='checkbox' id='SCcheck'>自動選取考英文還是考中文
 	<table id='table'>
 	<tbody id='list'>
 	<script>
@@ -104,36 +109,52 @@
 	var bodyheight = document.body.clientHeight;
 	var tablewidth = document.getElementById('table').clientWidth;
 	var tableheight = document.getElementById('table').clientHeight;
-	var check = 0;
 	var nowQ = 0;
-	var right = localStorage.getItem('right');
-	if(right == null) right = 0;
-	var wrong = localStorage.getItem('wrong');
-	if(wrong == null) wrong = 0;
+	var right = local('right',0);
+	var wrong = local('wrong',0);
+	var font = local('font',20);
+	var SCcheckt = local('SCcheck','false');
+	var get = JsongetF(local('get',JsonsaveF([0,0,0])));
+	getF(0,'IDK');
+	getF(1,'IDK');
+	getF(2,'IDK');
 	var saveset = [];
-	var font = localStorage.getItem('font');
-	if(font == null) font = 20;
-	var get = [0,0,0];
 	fontset(font);
-	getF(0,0);
-	getF(1,0);
-	getF(2,0);
 	db.ref('set').once('value', function (snapshot){
 		list = snapshot.val();
-		GetF(0);
+		ChangeF(['Set','Get'],[]);
+		textF();
+		recoverF(0);
 	});
-	function getF(i,set){
-		get[i]+=set
-		if(get[i] < 0){
-			get[i] = 0;
+	function SCcheckF(e){
+		if(e.title == 'true'){
+			ChangeF([],['check','Ncheck'])
+			e.title == 'false';
+			e.innerText = '關';
+		}else if(e.title == 'false'){
+			ChangeF([],['check','Ncheck'])
+			e.title == 'true';
+			e.innerText = '開';
 		}
-		document.getElementById('get'+i+'set').innerText = get[i];
+		localStorage.setItem('SCcheck',e.title);
 	}
-	function GetF(getA){
-		if(getA == 0){
-			ChangeF(['Set','Get'],[]);
-			textF();
-			recoverF(0);
+	function local(get,define){
+		get = localStorage.getItem(get);
+		if(get == null){
+			return define;
+		}else{
+			return get;
+		}
+	}
+	function getF(i,set){
+		if(set.tagName == 'TEXT' && set.className != 'notget'){
+			get[i]+=parseInt(set.innerText,10);
+			if(get[i] < 0){
+				get[i] = 0;
+			}
+			document.getElementById('get'+i+'set').innerText = get[i];
+		}else if(set == 'IDK'){
+			document.getElementById('get'+i+'set').innerText = get[i];
 		}
 	}
 	function recoverF(get){
@@ -168,9 +189,14 @@
 	function SCF(get1,get2){
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
-		if(get <= list.length && get > 0){
+		if(get > 0){
+			var setlength = set.length;
 			for(i=set.length;i<get;i++){
-				recoverF(1);
+				if((i - setlength) % list.length == 0){
+					recoverF(0);
+				}else{
+					recoverF(1);
+				}
 				var num = random(0);
 				if(check == 1){
 					var num4 = Math.floor(Math.random()*2);
@@ -222,13 +248,9 @@
 		bodyheight = document.body.scrollHeight;
 		tablewidth = document.getElementById('table').clientWidth;
 		tableheight = document.getElementById('table').scrollHeight;
-		if(document.getElementById('SCcheck').checked == true && check == 0){
-			ChangeF([],['check','Ncheck'])
-			check++;
-		}else if(document.getElementById('SCcheck').checked == false && check == 1){
-			ChangeF([],['check','Ncheck'])
-			check--;
-		}
+		localStorage.setItem('get',JsonsaveF(get));
+		localStorage.setItem('right',right);
+		localStorage.setItem('wrong',wrong);
 	},100);
 	function fontset(font){
 		document.getElementById('Set').style.fontSize = font+'px'
@@ -263,15 +285,19 @@
 		if(get.innerText == list[set[nowQ][0][0]][set[nowQ][0][3]][set[nowQ][0][set[nowQ][0][3]+1]]){
 			get.innerText+= ' 恭喜答對'
 			get.style.color = 'lightgreen';
+			right++;
 		}else{
 			get.innerText+= ' 錯誤'
 			get.style.color = 'red';
-			saveset[saveset.length] = set[nowQ]
+			saveset[saveset.length] = set[nowQ];
+			wrong++;
 		}
 		for(i=1;i<5;i++){
 			document.getElementById('ans'+i).setAttribute('onclick','');
 		}
+		var timeout = window.setTimeout(next, 3000);
 		document.getElementById('nextset').setAttribute('onclick','next();');
+		window.clearTimeout(timeout);
 	}
 	function next(){
 		nowQ++;
