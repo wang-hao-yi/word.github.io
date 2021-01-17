@@ -131,11 +131,11 @@
 	function SCcheckF(e){
 		if(e.title == 'true'){
 			ChangeF([],['check','Ncheck'])
-			e.title == 'false';
+			e.title = 'false';
 			e.innerText = '關';
 		}else if(e.title == 'false'){
 			ChangeF([],['check','Ncheck'])
-			e.title == 'true';
+			e.title = 'true';
 			e.innerText = '開';
 		}
 		localStorage.setItem('SCcheck',e.title);
