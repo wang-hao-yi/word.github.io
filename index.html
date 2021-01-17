@@ -47,7 +47,7 @@
 	<text id='fontget'></text>
 	<text onclick='fontset(++font);'>字體放大</text><br>
 	<text>自動選取考英文還是考中文:</text>
-	<text title='false' onclick='SCcheckF(event.srcElement)'>關</text>
+	<text id='SCcheck' title='false' onclick='SCcheckF(event.srcElement)'>關</text>
 	<div class='check'>
 	<div onclick='getF(1,event.srcElement)' class='notget'>
 	<text class='notget'>考英文(單選):</text>
@@ -113,7 +113,6 @@
 	var right = local('right',0);
 	var wrong = local('wrong',0);
 	var font = local('font',20);
-	var SCcheckt = local('SCcheck','false');
 	var get = JsongetF(local('get',JsonsaveF([0,0,0])));
 	getF(0,'IDK');
 	getF(1,'IDK');
@@ -126,6 +125,9 @@
 		textF();
 		recoverF(0);
 	});
+	if(local('SCcheck','false') == 'true'){
+		SCcheckF(document.getElementById('SCcheck'))
+	}
 	function SCcheckF(e){
 		if(e.title == 'true'){
 			ChangeF([],['check','Ncheck'])
