@@ -192,15 +192,15 @@
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
 		if(get > 0){
-                        set = []
+                        var setlength = set.length
 			for(i=set.length;i<get;i++){
-				if(i % list.length == 0){
+				if((i - setlength) % list.length == 0){
 					recoverF(0);
 				}else{
 					recoverF(1);
 				}
 				var num = random(0);
-				if(check == 1){
+				if(document.getElemetById('SCcheck').title == 'true'){
 					var num4 = Math.floor(Math.random()*2);
 				}else if(i < parseInt(get1,10)){
 					var num4 = 0;
