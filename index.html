@@ -159,9 +159,9 @@
 			document.getElementById('get'+i+'set').innerText = get[i];
 		}
 	}
-	function recoverF(get){
+	function recoverF(e){
 		for(var i=0;i<list.length;i++){
-			if(get == 0){
+			if(e == 0){
 				listn[i] = [];
 				listn[i][0] = 0;
 			}
@@ -192,7 +192,6 @@
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
 		if(get > 0){
-			var setlength = set.length;
 			for(i=set.length;i<get;i++){
 				if(i % list.length == 0){
 					recoverF(0);
@@ -254,11 +253,12 @@
 		localStorage.setItem('right',right);
 		localStorage.setItem('wrong',wrong);
 	},100);
-	function fontset(font){
-		document.getElementById('Set').style.fontSize = font+'px'
-		document.getElementById('fontget').innerText = font+'px'
-		localStorage.setItem('font',font);
-		document.getElementById('question').style.fontSize = font+'px'
+	function fontset(e){
+		document.getElementById('Set').style.fontSize = e+'px'
+		document.getElementById('fontget').innerText = e+'px'
+		localStorage.setItem('font',e$;
+		document.getElementById('question').style.fontSize = e+'px'
+                font = e;
 	}
 	function questionF(){
 		if(set[nowQ][0][3] == 0){
