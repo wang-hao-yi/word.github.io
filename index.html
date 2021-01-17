@@ -194,7 +194,7 @@
 		if(get > 0){
 			var setlength = set.length;
 			for(i=set.length;i<get;i++){
-				if((i - setlength) % list.length == 0){
+				if(i % list.length == 0){
 					recoverF(0);
 				}else{
 					recoverF(1);
