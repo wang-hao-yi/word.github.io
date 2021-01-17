@@ -69,13 +69,9 @@
 	<div class='Ncheck'>
 	<div onclick='getF(0,event.srcElement)' class='notget'>
 	<text class='notget'>題目數:</text>
-	<text>-10</text>
-	<text>-5</text>
-	<text>-1</text>
+	<text>-10</text><text>-5</text><text>-1</text>
 	<text id='get0set' class='notget'>0</text>
-	<text>+1</text>
-	<text>+5</text>
-	<text>+10</text>
+	<text>+1</text><text>+5</text><text>+10</text>
 	<br>
 	</div>
 	<button onclick='SCF(get[0],0);'>單選確定</button>
@@ -192,7 +188,7 @@
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
 		if(get > 0){
-                        alert(set);
+                        alert(set,list);
                         var setlength = set.length
 			for(i=set.length;i<get;i++){
 				if((i - setlength) % list.length == 0){
