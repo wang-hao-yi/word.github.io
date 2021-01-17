@@ -141,7 +141,7 @@
 		localStorage.setItem('SCcheck',e.title);
 	}
 	function local(e,define){
-		e = localStorage.getItem(get);
+		e = localStorage.getItem(e);
 		if(e == null){
 			return define;
 		}else{
