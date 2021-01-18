@@ -172,8 +172,8 @@
                 var max = [0,0]
                 for(i=0;i<list.length;i++){
                         for(j=0;j<list[i].length){
-                        if(list[i][j] > max[j]){
-                        max[j] = list[i][j];
+                        if(list[i][j].length > max[j]){
+             	        	max[j] = list[i][j].length;
                         }
                         }
                 }
