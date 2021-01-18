@@ -169,23 +169,23 @@
 			document.getElementById('list').innerText = ''
 			CreateF('script',"currentScript['Set'] = document.currentScript;",'list')
 		}
-                var max = [0,0]
-                for(var i=0;i<list.length;i++){
-                        for(var j=0;j<list[i].length;j++){
-                        if(list[i][j].length > max[j]){
-             	        	max[j] = list[i][j].length;
-                        }
-                        }
-                }
+		var max = [0,0]
+		for(var i=0;i<list.length;i++){
+			for(var j=0;j<list[i].length;j++){
+					if(list[i][j].length > max[j]){
+						max[j] = list[i][j].length;
+					}
+				}
+		}
 		var i=0,j=0;
 		while(i<list.length){
 			var str='<tr>';
 			while(j<list[i].length){
 				for(k=0;k<max[j];k++){
-                                        if(NUF(list[i][j][k],[true,true],'or')){
-                                        	 str+='<td> </td>'
-                                        }else{
-						 str+='<td>'+list[i][j][k]+'</td>'
+					if(NUF(list[i][j][k],[true,true],'or')){
+						str+='<td> </td>'
+					}else{
+						str+='<td>'+list[i][j][k]+'</td>'
 					}
 				}
 				j++;
@@ -200,7 +200,7 @@
 		recoverF(0);
 		var get = parseInt(get1,10)+parseInt(get2,10);
 		if(get > 0){
-                        var setlength = set.length
+			var setlength = set.length
 			for(i=set.length;i<get;i++){
 				if((i - setlength) % list.length == 0){
 					recoverF(0);
