@@ -181,8 +181,12 @@
 		while(i<list.length){
 			var str='<tr>';
 			while(j<list[i].length){
-				for(k=0;k<list[i][j].length;k++){
-					str+='<td>'+list[i][j][k]+'</td>'
+				for(k=0;k<max[j];k++){
+                                        if(NUF(list[i][j][k],[false,false],'or')){
+                                        	 str+='<td> </td>'
+                                        }else{
+						 str+='<td>'+list[i][j][k]+'</td>'
+					}
 				}
 				j++;
 			}
