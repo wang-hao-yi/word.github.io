@@ -87,24 +87,29 @@
 				}
 			}
 		}
-		for(var i=0;i<list.length+1;i++){
+		for(var i=0;i<list.length;i++){
 			var str='<tr>';
 			for(var j=0;j<2;j++){
-				for(var k=0;k<max[j];k++){
-					if(NUF(list[i],[true,true],'or')){
-						str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>+</td>'
-					}else if(NUF(list[i][j],[true,true],'or')){
-						str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>+</td>'
-					}else if(NUF(list[i][j][k],[true,true],'or')){
-						str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>+</td>'
-					}else{
-						str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>'+list[i][j][k]+'</td>'
-					}
+				for(k=0;k<list[i][j].length;k++){
+					str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>'+list[i][j][k]+'</td>'
+				}
+				str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>+</td>'
+				for(var k=max[j]-list[i][j].length-1;k>0;k--){
+					str+='<td> </td>'
 				}
 			}
 			str+='</tr>';
 			CurrentScriptF('Set','bb',str);
 		}
+		var str='<tr>';
+			for(var j=0;j<2;j++){
+				str+='<td onclick='+addTextF('add('+i+','+j+','+0+',event.srcElement)')+'>+</td>'
+				for(var k=max[j]-1;k>0;k--){
+					str+='<td> </td>'
+				}
+			}
+			str+='</tr>';
+			CurrentScriptF('Set','bb',str);
 	}
 	function fontset(font){
 		document.getElementById('Set').style.fontSize = font+'px'
@@ -120,7 +125,7 @@
 				}else{var set = prompt('請輸入該項(空白為不定義)');}
 			}else{var set = prompt('請輸入該項(空白為不定義)');}
 		}else{var set = prompt('請輸入該項(空白為不定義)');}
-		if(set !== ''){
+		if(set !== '' && set !== null){
 			e.innerText = set;
 			if(NUF(list[i],[true,true],'or')){
 				list[i] = [];
