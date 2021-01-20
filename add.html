@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>英文單字</title>
+		<title>英文單字更改</title>
 		<link rel="stylesheet" type="text/css" href="./word.css">
 		<script src='./Assist.js'></script>
 		<script>
@@ -46,19 +46,34 @@
 	<text onclick='fontset(--font);'>字體縮小</text>
 	<text id='fontget'></text>
 	<text onclick='fontset(++font);'>字體放大</text><br>
-	<table id='table'>
+	<table id='table' class='change'>
 	<tbody id='list'>
 	<script>
 	currentScript['Set'] = document.currentScript;
 	</script>
 	</tbody>
 	</table>
+	<div id='test' class='change'>
+	<text>設定該項:</text>
+	<select id='select'>
+	<script>
+	currentScript['option'] = document.currentScript;
+	</script>
+	</select>
+	<input id='setitem' style="font-size:20px">
+	<text id='change0' onclick='changetextF(0)'>更改</text>
+	<text id='change1' onclick='changetextF(0,0,0,1)'>取消</text>
+	</div>
 	</div>
 	<script>
-	ChangeF(['Set'],[]);
 	var list = [];
 	var font = local('font',20);
-	fontset(font);
+	var index = ['(n.)','(pron.)','(v.)','(adj.)','(adv.)','(conj.)','(prep.)','(aux.)']
+	window.onload=function (){
+		ChangeF(['Set','test','select'],[]);
+		fontset(font);
+		
+	}
 	db.ref('3jHUIHawvkUo5R4bUvOw52c7YCK2').once('value', function (snapshot){
 		ChangeF(['Set','Get'],[]);
 	});
@@ -66,6 +81,21 @@
 		list = snapshot.val();
 		textF();
 	});
+	function setlectF(get){
+		if(NUF(document.getElementById('select'),[false,false],'and')){
+			document.getElementById('select').innerText = ''
+			CreateF('script',"currentScript['option'] = document.currentScript;",'select')
+		}
+		var str = ''
+		for(var i=0;i<index.length;i++){
+			str+='<option value='+index[i];
+			if(i == get){
+				str+=' selected';
+			}
+			str+='>'+index[i]+'</option>';
+		}
+		CurrentScriptF('option','bb',str);
+	}
 	function local(get,define){
 		get = localStorage.getItem(get);
 		if(get == null){
@@ -73,6 +103,19 @@
 		}else{
 			return get;
 		}
+	}
+	function strsetF(i,j,midk,max,get){
+		var str = '';
+		for(k=0;k<midk;k++){
+			str+='<td onclick='+addTextF('add('+i+','+j+','+k+')')+'>'+list[i][j][k]+'</td>';
+		}
+		if(get == 1){
+			str+='<td onclick='+addTextF('add('+i+','+j+','+k+')')+'>+</td>';
+		}
+		for(k=max-midk-1;k>0;k--){
+			str+='<td> </td>';
+		}
+		return str;
 	}
 	function textF(){
 		if(NUF(document.getElementById('list'),[false,false],'and')){
@@ -87,55 +130,78 @@
 				}
 			}
 		}
-		for(var i=0;i<list.length;i++){
+		for(var i=0;i<list.length+1;i++){
 			var str='<tr>';
 			for(var j=0;j<2;j++){
-				for(k=0;k<list[i][j].length;k++){
-					str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>'+list[i][j][k]+'</td>'
-				}
-				str+='<td onclick='+addTextF('add('+i+','+j+','+k+',event.srcElement)')+'>+</td>'
-				for(var k=max[j]-list[i][j].length-1;k>0;k--){
-					str+='<td> </td>'
+				if(NUF(list[i],[false,false],'and')){
+					if(NUF(list[i][j],[false,false],'and')){
+						str+= strsetF(i,j,list[i][j].length,max[j],1)
+					}else{
+						str+= strsetF(i,j,0,max[j],1);
+					}
+				}else{
+					str+= strsetF(i,j,0,max[j],1);
 				}
 			}
 			str+='</tr>';
 			CurrentScriptF('Set','bb',str);
 		}
-		var str='<tr>';
-			for(var j=0;j<2;j++){
-				str+='<td onclick='+addTextF('add('+i+','+j+','+0+',event.srcElement)')+'>+</td>'
-				for(var k=max[j]-1;k>0;k--){
-					str+='<td> </td>'
-				}
-			}
-			str+='</tr>';
-			CurrentScriptF('Set','bb',str);
 	}
 	function fontset(font){
 		document.getElementById('Set').style.fontSize = font+'px'
+		document.getElementById('setitem').style.fontSize = font+'px'
+		document.getElementById('select').style.fontSize = font+'px'
 		document.getElementById('fontget').innerText = font+'px'
 		localStorage.setItem('font',font);
 	}
-	function add(i,j,k,e){
-		console.log(i,j,k,e)
+	function add(i,j,k){
+		document.getElementById('setitem').value = '';
+		ChangeF([],['change']);
+		document.getElementById('change0').setAttribute('onclick','changetextF('+i+','+j+','+k+','+0+')');
+		document.getElementById('change1').setAttribute('onclick','changetextF('+i+','+j+','+k+','+1+')');
+		if(j == 1){
+			ChangeF(['select'],[]);
+			setlectF(0);
+		}
 		if(NUF(list[i],[false,false],'and')){
 			if(NUF(list[i][j],[false,false],'and')){
 				if(NUF(list[i][j][k],[false,false],'and')){
-					var set = prompt('請輸入該項(空白為不定義)',list[i][j][k]);
-				}else{var set = prompt('請輸入該項(空白為不定義)');}
-			}else{var set = prompt('請輸入該項(空白為不定義)');}
-		}else{var set = prompt('請輸入該項(空白為不定義)');}
-		if(set !== '' && set !== null){
-			e.innerText = set;
+					document.getElementById('setitem').value = list[i][j][k];
+					if(j == 1){
+						document.getElementById('setitem').value = document.getElementById('setitem').value.substr(index[getPoF(i,j,k)].length)
+						setlectF(getPoF(i,j,k));
+					}
+				}
+			}
+		}
+	}
+	function getPoF(i,j,k){
+		var get = list[i][j][k];
+		for(i=0;i<index.length;i++){
+			if(get.indexOf(index[i]) !== -1){
+				return i;
+			}
+		}
+	}
+	function changetextF(i,j,k,get){
+		if(get == 0){
 			if(NUF(list[i],[true,true],'or')){
 				list[i] = [];
 			}
 			if(NUF(list[i][j],[true,true],'or')){
 				list[i][j] = [];
 			}
-			list[i][j][k] = set;
+			list[i][j][k]='';
+			if(j == 1){
+				list[i][j][k]+=document.getElementById('select').value;
+			}
+			list[i][j][k]+=document.getElementById('setitem').value;
 			db.ref('/3jHUIHawvkUo5R4bUvOw52c7YCK2').set(list);
 		}
+		if(j == 1){
+				ChangeF(['select'],[]);
+		}
+		ChangeF([],['change']);
 	}
 	</script>
 	</body>
