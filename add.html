@@ -32,9 +32,16 @@
 	</tr>
 	</table>
 	<div id='Set'>
-	<text onclick='fontset(--font);'>字體縮小</text>
-	<text id='fontget'></text>
-	<text onclick='fontset(++font);'>字體放大</text><br>
+	字體大小:
+	<text onclick='--document.getElementById("test").value'>-</text>
+	<select id='test'>
+	<script>
+	currentScript['test'] = document.currentScript;
+	</script>
+	</select>
+	<text onclick='++document.getElementById("test").value'>+</text><br>
+	連續增加文字
+	<text onclick=''>連續增加文字</text><br>
 	<table id='table' class='change'>
 	<tbody id='list'>
 	<script>
@@ -42,7 +49,7 @@
 	</script>
 	</tbody>
 	</table>
-	<div id='test' class='change'>
+	<div id='SetItem' class='change'>
 	<text>設定該項:</text>
 	<select id='select'>
 	<script>
@@ -56,11 +63,11 @@
 	</div>
 	<script>
 	var list = [];
-	var font = local('font',20);
+	var font = parseInt(local('font',20),10);
 	var index = ['(n.)','(pron.)','(v.)','(adj.)','(adv.)','(conj.)','(prep.)','(aux.)']
 	window.onload=function (){
-		ChangeF(['Set','test','select'],[]);
-		fontset(font);
+		ChangeF(['Set','SetItem','select'],[]);
+		fontset();
 		
 	}
 	db.ref('3jHUIHawvkUo5R4bUvOw52c7YCK2').once('value', function (snapshot){
@@ -136,11 +143,24 @@
 			CurrentScriptF('Set','bb',str);
 		}
 	}
-	function fontset(font){
+	function fontset(){
+		if(NUF(document.getElementById('test'),[false,false],'and')){
+			document.getElementById('test').innerText = ''
+			CreateF('script',"currentScript['test'] = document.currentScript;",'test')
+		}
+		var str = ''
+		for(var i=font-5;i<font+6;i++){
+			str+='<option value='+i;
+			if(i == font){
+				str+=' class="bold" selected';
+			}
+			str+='>'+i+'px</option>';
+		}
+		CurrentScriptF('test','bb',str);
 		document.getElementById('Set').style.fontSize = font+'px'
 		document.getElementById('setitem').style.fontSize = font+'px'
 		document.getElementById('select').style.fontSize = font+'px'
-		document.getElementById('fontget').innerText = font+'px'
+		document.getElementById('test').style.fontSize = font+'px'
 		localStorage.setItem('font',font);
 	}
 	function add(i,j,k){
@@ -193,6 +213,12 @@
 		ChangeF([],['change']);
 		window.scrollTo(0,document.body.scrollHeight);
 	}
+	var AutoLoadF = setInterval(function (){
+		if(document.getElementById('test').value != font && document.getElementById('test').value != 0){
+			font = parseInt(document.getElementById('test').value,10);
+			fontset();
+		}
+	},500)
 	</script>
 	</body>
 </html>
