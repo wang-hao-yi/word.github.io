@@ -23,17 +23,6 @@
 		firebase.initializeApp(firebaseConfig);
 		firebase.analytics();
 		const db = firebase.database();
-		/*
-		{
-  "rules": {
-    ".write":"auth.uid != null",
-    ".read": true,
-    "$user": {
-      ".validate":"$user === auth.uid"
-    }
-  }
-}
-*/
 		</script>
 	</head>
 	<body>
@@ -202,6 +191,7 @@
 				ChangeF(['select'],[]);
 		}
 		ChangeF([],['change']);
+		window.scrollTo(0,document.body.scrollHeight);
 	}
 	</script>
 	</body>
